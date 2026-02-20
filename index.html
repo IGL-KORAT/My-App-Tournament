@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming App Pro - Fixed</title>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(180deg, #1a237e 0%, #64b5f6 100%);
+            --primary: #0d47a1;
+            --success: #2e7d32;
+            --danger: #c62828;
+            --white: rgba(255, 255, 255, 0.95);
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body, html { margin: 0; padding: 0; min-height: 100%; background: var(--bg-gradient); background-attachment: fixed; }
+
+        .hidden { display: none !important; }
+        .blur { filter: blur(8px); pointer-events: none; }
+
+        /* --- Screens --- */
+        .screen { height: 100vh; width: 100%; display: flex; flex-direction: column; align-items: center; position: relative; overflow-y: auto; }
+        .center-content { justify-content: center; }
+
+        /* --- Auth Styling --- */
+        .auth-box { background: var(--white); padding: 25px; border-radius: 20px; width: 320px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid #ddd; }
+        .tab { flex: 1; padding: 10px; cursor: pointer; font-weight: bold; color: #666; }
+        .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
+        
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ccc; outline: none; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 25px; cursor: pointer; font-weight: bold; color: white; margin-top: 10px; }
+        .btn-blue { background: var(--primary); }
+        .btn-green { background: var(--success); }
+        .btn-red { background: var(--danger); }
+
+        /* --- UI Components --- */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; width: 100%; color: white; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .circle-icon { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: bold; }
+        .wallet-box { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.2); padding: 8px 15px; border-radius: 20px; }
+
+        #nav-panel { position: fixed; bottom: 15px; width: 75%; height: 60px; background: var(--white); border-radius: 30px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); left: 50%; transform: translateX(-50%); z-index: 100; }
+
+        .page-content { width: 100%; padding: 20px; padding-bottom: 100px; }
+        .label-bar { background: white; padding: 10px; border-radius: 10px; font-weight: bold; text-align: center; margin-bottom: 20px; color: #333; }
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .game-card { background: white; padding: 30px 10px; border-radius: 15px; font-weight: bold; text-align: center; position: relative; cursor: pointer; min-height: 100px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .delete-icon { position: absolute; top: 5px; right: 8px; color: var(--danger); font-size: 18px; }
+
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 20px; z-index: 1000; width: 280px; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        .task-rect { background: white; padding: 15px; border-radius: 15px; margin-bottom: 10px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div id="scr-auth" class="screen center-content">
+        <div class="auth-box">
+            <div class="auth-tabs">
+                <div id="tab-login" class="tab active" onclick="switchAuth('login')">Login</div>
+                <div id="tab-sign" class="tab" onclick="switchAuth('signin')">Sign In</div>
+            </div>
+            <input type="email" id="auth-email" placeholder="Email / Admin ID">
+            <input type="password" id="auth-pass" placeholder="Password">
+            <button class="btn btn-blue" onclick="handleAuthSubmit()">Submit</button>
+        </div>
+    </div>
+
+    <div id="scr-username" class="screen center-content hidden">
+        <div class="auth-box">
+            <h3>Choose Username</h3>
+            <input type="text" id="new-uname" placeholder="Your Name">
+            <button class="btn btn-green" onclick="saveNewUser()">Start Gaming</button>
+        </div>
+    </div>
+
+    <div id="app-container" class="hidden">
+        <div class="top-bar">
+            <div class="user-info">
+                <div class="circle-icon" id="bar-initial">?</div>
+                <span id="bar-name">User</span>
+            </div>
+            <div class="wallet-box"><i data-lucide="wallet" size="18"></i> <span id="bar-wallet">0</span></div>
+        </div>
+
+        <div id="page-home" class="page-content">
+            <div class="label-bar">GAMES AVAILABLE</div>
+            <div id="game-grid" class="game-grid"></div>
+        </div>
+
+        <div id="page-profile" class="page-content hidden">
+            <div style="text-align: center; margin-top: 20px;">
+                <div class="circle-icon" style="width: 80px; height: 80px; margin: 0 auto 15px;"><i data-lucide="user" size="40"></i></div>
+                <h2 id="prof-name" style="color: white; margin: 5px 0;">Name</h2>
+                <p id="prof-email" style="color: #eee;">email@example.com</p>
+                <div style="display: flex; justify-content: center; gap: 15px; margin: 25px 0;">
+                    <button class="btn btn-blue" style="width: 120px;" onclick="toggleWalletModal('add')">+ Add</button>
+                    <button class="btn btn-blue" style="width: 120px;" onclick="toggleWalletModal('withdraw')">- Withdraw</button>
+                </div>
+                <button class="btn btn-red" style="width: 80%;" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div id="page-tasks" class="page-content hidden">
+            <div class="label-bar" id="task-title">TASKS</div>
+            <div id="task-list"></div>
+            <button class="btn btn-blue" onclick="showPage('home')" style="width: 120px; margin: 20px auto; display: block;">Back</button>
+        </div>
+
+        <div id="page-details" class="page-content hidden">
+            <div style="display: flex; align-items: center; gap: 15px; color: white; margin-bottom: 20px;">
+                <div class="circle-icon"><i data-lucide="gamepad-2"></i></div>
+                <div><h3 id="det-game-name" style="margin:0">Game</h3><small id="det-task-name">Task</small></div>
+            </div>
+            <div class="label-bar">MATCH DETAILS</div>
+            <div id="detail-notes" style="color: white; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-bottom: 20px; line-height: 1.8;">
+            </div>
+            <button class="btn btn-green" onclick="alert('Joined Successfully!')">PAY & JOIN</button>
+            <button id="admin-edit-btn" class="btn btn-red hidden" style="margin-top:20px" onclick="adminEditDetails()">Edit Details (Admin)</button>
+        </div>
+
+        <div id="nav-panel">
+            <div onclick="showPage('home')"><i data-lucide="home"></i></div>
+            <div onclick="alert('No History Found')"><i data-lucide="history"></i></div>
+            <div onclick="showPage('profile')"><i data-lucide="user"></i></div>
+        </div>
+    </div>
+
+    <div id="wallet-modal" class="modal hidden">
+        <h3 id="modal-title">Amount</h3>
+        <input type="number" id="wallet-amt" placeholder="Enter (1-100)">
+        <button class="btn btn-green" onclick="processWallet()">Confirm</button>
+        <button onclick="toggleWalletModal()" style="background:none; border:none; margin-top:10px; cursor:pointer; color: #666;">Cancel</button>
+    </div>
+
+    <script>
+        // --- 1. Global State & Data ---
+        let users = JSON.parse(localStorage.getItem('app_users')) || [];
+        let games = JSON.parse(localStorage.getItem('app_games')) || ["Free Fire", "BGMI", "COD"];
+        let gameTasks = JSON.parse(localStorage.getItem('app_tasks')) || {};
+        
+        let currentUser = null;
+        let authMode = 'login';
+        let currentOpenGame = '';
+        let currentOpenTaskIdx = -1;
+
+        // --- 2. Auth Logic ---
+        function switchAuth(mode) {
+            authMode = mode;
+            document.getElementById('tab-login').classList.toggle('active', mode === 'login');
+            document.getElementById('tab-sign').classList.toggle('active', mode === 'signin');
+        }
+
+        function handleAuthSubmit() {
+            const email = document.getElementById('auth-email').value.trim();
+            const pass = document.getElementById('auth-pass').value.trim();
+
+            if(!email || !pass) return alert("Please fill all fields");
+
+            // Admin Access
+            if(email === 'admin' && pass === 'admin123') {
+                currentUser = { username: "Admin", email: "admin", wallet: 9999, isAdmin: true };
+                startApp();
+                return;
+            }
+
+            if(authMode === 'login') {
+                const user = users.find(u => u.email === email && u.pass === pass);
+                if(user) {
+                    currentUser = user;
+                    startApp();
+                } else {
+                    alert("User not found or wrong password!");
+                }
+            } else {
+                if(users.find(u => u.email === email)) return alert("Email already exists!");
+                // Prepare temp user for username screen
+                currentUser = { email, pass, wallet: 0, isAdmin: false };
+                document.getElementById('scr-auth').classList.add('hidden');
+                document.getElementById('scr-username').classList.remove('hidden');
+            }
+        }
+
+        function saveNewUser() {
+            const uname = document.getElementById('new-uname').value.trim();
+            if(!uname) return alert("Enter a username");
+            currentUser.username = uname;
+            users.push(currentUser);
+            localStorage.setItem('app_users', JSON.stringify(users));
+            startApp();
+        }
+
+        function startApp() {
+            document.getElementById('scr-auth').classList.add('hidden');
+            document.getElementById('scr-username').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+            updateUI();
+            showPage('home');
+            lucide.createIcons();
+        }
+
+        function updateUI() {
+            document.getElementById('bar-initial').innerText = currentUser.username[0].toUpperCase();
+            document.getElementById('bar-name').innerText = currentUser.username;
+            document.getElementById('bar-wallet').innerText = currentUser.wallet;
+            document.getElementById('prof-name').innerText = currentUser.username;
+            document.getElementById('prof-email').innerText = currentUser.email;
+            renderGames();
+        }
+
+        function logout() {
+            currentUser = null;
+            location.reload(); // Hard reset to login
+        }
+
+        // --- 3. Navigation ---
+        function showPage(pageId) {
+            ['home', 'profile', 'tasks', 'details'].forEach(p => {
+                document.getElementById('page-' + p).classList.add('hidden');
+            });
+            document.getElementById('page-' + pageId).classList.remove('hidden');
+        }
+
+        // --- 4. Game & Task Management ---
+        function renderGames() {
+            const grid = document.getElementById('game-grid');
+            grid.innerHTML = '';
+            
+            games.forEach((g, idx) => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.innerHTML = `<span>${g}</span>`;
+                if(currentUser.isAdmin) {
+                    card.innerHTML += `<span class="delete-icon" onclick="deleteGame(${idx}, event)">✖</span>`;
+                }
+                card.onclick = () => openTaskList(g);
+                grid.appendChild(card);
+            });
+
+            if(currentUser.isAdmin) {
+                const addBtn = document.createElement('div');
+                addBtn.className = 'game-card';
+                addBtn.style.border = "2px dashed #999";
+                addBtn.innerHTML = '<i data-lucide="plus"></i>';
+                addBtn.onclick = () => {
+                    const name = prompt("Enter Game Name:");
+                    if(name) {
+                        games.push(name);
+                        localStorage.setItem('app_games', JSON.stringify(games));
+                        renderGames();
+                        lucide.createIcons();
+                    }
+                };
+                grid.appendChild(addBtn);
+                lucide.createIcons();
+            }
+        }
+
+        function deleteGame(idx, e) {
+            e.stopPropagation();
+            if(confirm("Delete this game?")) {
+                games.splice(idx, 1);
+                localStorage.setItem('app_games', JSON.stringify(games));
+                renderGames();
+            }
+        }
+
+        function openTaskList(gameName) {
+            currentOpenGame = gameName;
+            showPage('tasks');
+            document.getElementById('task-title').innerText = gameName + " TASKS";
+            renderTasks();
+        }
+
+        function renderTasks() {
+            const list = document.getElementById('task-list');
+            list.innerHTML = '';
+            const tasks = gameTasks[currentOpenGame] || [];
+
+            if(tasks.length === 0) {
+                list.innerHTML = '<div style="color:white; text-align:center;">No match available.</div>';
+            } else {
+                tasks.forEach((t, idx) => {
+                    const div = document.createElement('div');
+                    div.className = 'task-rect';
+                    div.innerHTML = `<span>${t.name}</span>`;
+                    if(currentUser.isAdmin) {
+                        div.innerHTML += `<span style="color:red" onclick="deleteTask(${idx}, event)">✖</span>`;
+                    }
+                    div.onclick = () => openDetails(idx);
+                    list.appendChild(div);
+                });
+            }
+
+            if(currentUser.isAdmin) {
+                const addT = document.createElement('div');
+                addT.className = 'task-rect';
+                addT.style.background = "#e3f2fd";
+                addT.innerHTML = '<i data-lucide="plus" style="margin:auto"></i>';
+                addT.onclick = () => {
+                    const tName = prompt("Enter Match Name (e.g. Solo BR):");
+                    if(tName) {
+                        if(!gameTasks[currentOpenGame]) gameTasks[currentOpenGame] = [];
+                        gameTasks[currentOpenGame].push({
+                            name: tName, date: "TBA", time: "TBA", fee: "0", prize: "0"
+                        });
+                        localStorage.setItem('app_tasks', JSON.stringify(gameTasks));
+                        renderTasks();
+                        lucide.createIcons();
+                    }
+                };
+                list.appendChild(addT);
+                lucide.createIcons();
+            }
+        }
+
+        function deleteTask(idx, e) {
+            e.stopPropagation();
+            gameTasks[currentOpenGame].splice(idx, 1);
+            localStorage.setItem('app_tasks', JSON.stringify(gameTasks));
+            renderTasks();
+        }
+
+        function openDetails(idx) {
+            currentOpenTaskIdx = idx;
+            const task = gameTasks[currentOpenGame][idx];
+            showPage('details');
+            
+            document.getElementById('det-game-name').innerText = currentOpenGame;
+            document.getElementById('det-task-name').innerText = task.name;
+            
+            document.getElementById('detail-notes').innerHTML = `
+                📅 <b>Date:</b> ${task.date}<br>
+                ⏰ <b>Time:</b> ${task.time}<br>
+                💰 <b>Fee:</b> ${task.fee} Coins<br>
+                🏆 <b>Prize:</b> ${task.prize} Coins
+            `;
+
+            if(currentUser.isAdmin) {
+                document.getElementById('admin-edit-btn').classList.remove('hidden');
+            } else {
+                document.getElementById('admin-edit-btn').classList.add('hidden');
+            }
+        }
+
+        function adminEditDetails() {
+            const task = gameTasks[currentOpenGame][currentOpenTaskIdx];
+            const d = prompt("Date:", task.date);
+            const t = prompt("Time:", task.time);
+            const f = prompt("Entry Fee:", task.fee);
+            const p = prompt("Win Prize:", task.prize);
+
+            if(d) task.date = d;
+            if(t) task.time = t;
+            if(f) task.fee = f;
+            if(p) task.prize = p;
+
+            localStorage.setItem('app_tasks', JSON.stringify(gameTasks));
+            openDetails(currentOpenTaskIdx);
+        }
+
+        // --- 5. Wallet Logic ---
+        function toggleWalletModal(action) {
+            if(!action) {
+                document.getElementById('wallet-modal').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('blur');
+                return;
+            }
+            window.currentWalletAction = action;
+            document.getElementById('modal-title').innerText = (action === 'add') ? "Add Coins" : "Withdraw Coins";
+            document.getElementById('wallet-modal').classList.remove('hidden');
+            document.getElementById('app-container').classList.add('blur');
+        }
+
+        function processWallet() {
+            const amt = parseInt(document.getElementById('wallet-amt').value);
+            if(!amt || amt < 1 || amt > 100) return alert("Enter amount between 1-100");
+
+            if(window.currentWalletAction === 'add') {
+                currentUser.wallet += amt;
+            } else {
+                if(amt > currentUser.wallet) return alert("Insufficient Balance!");
+                currentUser.wallet -= amt;
+            }
+
+            // Sync with users array
+            if(!currentUser.isAdmin) {
+                const uIdx = users.findIndex(u => u.email === currentUser.email);
+                if(uIdx !== -1) {
+                    users[uIdx].wallet = currentUser.wallet;
+                    localStorage.setItem('app_users', JSON.stringify(users));
+                }
+            }
+            
+            updateUI();
+            toggleWalletModal();
+            document.getElementById('wallet-amt').value = '';
+        }
+function logout() {
+    // 1. Current user state clear karein
+    currentUser = null;
+    
+    // 2. LocalStorage se session clear karne ki zaroorat nahi kyunki hum users array save rakhte hain
+    // Lekin UI ko turant badalne ke liye:
+    document.getElementById('app-container').classList.add('hidden');
+    document.getElementById('scr-username').classList.add('hidden');
+    
+    // 3. Auth screen ko wapas dikhayein
+    document.getElementById('scr-auth').classList.remove('hidden');
+    
+    // 4. Login fields ko khali karein
+    document.getElementById('auth-email').value = '';
+    document.getElementById('auth-pass').value = '';
+
+    // 5. Forcefully reload karein (true se cache bypass hota hai)
+    window.location.href = window.location.pathname; 
+}
+
+        // Initialize icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
