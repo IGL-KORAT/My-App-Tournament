@@ -335,6 +335,7 @@
                 📅 <b>Date:</b> ${task.date}<br>
                 ⏰ <b>Time:</b> ${task.time}<br>
                 💰 <b>Fee:</b> ${task.fee} Coins<br>
+                💀 <b>reward:</b> ${task.reward}<br>
                 🏆 <b>Prize:</b> ${task.prize} Coins
             `;
 
@@ -350,11 +351,13 @@
             const d = prompt("Date:", task.date);
             const t = prompt("Time:", task.time);
             const f = prompt("Entry Fee:", task.fee);
+            const r = prompt("reward:" , task.reward);
             const p = prompt("Win Prize:", task.prize);
 
             if(d) task.date = d;
             if(t) task.time = t;
             if(f) task.fee = f;
+            if(r) task.reward = r;
             if(p) task.prize = p;
 
             localStorage.setItem('app_tasks', JSON.stringify(gameTasks));
