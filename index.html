@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gaming App Pro - Fixed</title>
+    <title>Gaming App - Admin Pro</title>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
-
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
     <style>
         :root {
@@ -16,112 +15,39 @@
             --danger: #c62828;
             --white: rgba(255, 255, 255, 0.95);
         }
-
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        
-  body, html { margin: 0; 
-               padding: 0; 
-               min-height: 100%;
-               background: var(--bg-gradient); 
-               background-attachment: fixed; }
-
+        body, html { margin: 0; padding: 0; min-height: 100%; background: var(--bg-gradient); background-attachment: fixed; }
         .hidden { display: none !important; }
-        
-        .blur { filter: blur(8px);             pointer-events: none; }
-
-        /* --- Screens --- */
-        .screen { height: 100vh; 
-                  width: 100%; 
-                  display: flex; 
-                  flex-direction:column;
-                  align-items: center;
-                  position: relative; 
-                  overflow-y: auto; }
-                  
+        .screen { height: 100vh; width: 100%; display: flex; flex-direction:column; align-items: center; position: relative; overflow-y: auto; }
         .center-content { justify-content: center; }
-
-        /* --- Auth Styling --- */
-        .auth-box { background: var(--white); 
-                    padding: 25px; 
-                    border-radius: 20px; 
-                    width: 320px; 
-                    text-align: center; 
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-                    
-        .auth-tabs { display: flex;   
-           margin-bottom: 20px; 
-           border-bottom: 2px solid #ddd; }
-           
-        .tab { flex: 1; 
-              padding: 10px; 
-              cursor: pointer; 
-              font-weight: bold; 
-              color: #666; }
-              
-        .tab.active { color: var(--primary); 
-              border-bottom: 3px solid var(--primary); }
-        
-        input { width: 100%; 
-                padding: 12px; 
-                margin: 10px 0; 
-                border-radius: 10px; 
-                border: 1px solid #ccc; 
-                outline: none; }
-                
-        .btn { width: 100%; 
-               padding: 12px; 
-               border: none; 
-               border-radius: 25px; 
-               cursor: pointer; 
-               font-weight: bold; 
-               color: white; 
-               margin-top: 10px; }
-               
+        .auth-box { background: var(--white); padding: 25px; border-radius: 20px; width: 320px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid #ddd; }
+        .tab { flex: 1; padding: 10px; cursor: pointer; font-weight: bold; color: #666; }
+        .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ccc; outline: none; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 25px; cursor: pointer; font-weight: bold; color: white; margin-top: 10px; }
         .btn-blue { background: var(--primary); }
-        
         .btn-green { background: var(--success); }
-        
         .btn-red { background: var(--danger); }
-        
-
-        /* --- UI Components --- */
-        .top-bar { display: flex; 
-              justify-content: space-between; 
-              align-items: center; 
-              padding: 15px 20px; 
-              width: 100%; 
-              color: white; }
-              
-        .user-info { display: flex; 
-                     align-items: center; gap: 10px; }
-                     
-    .circle-icon { width: 40px; 
-                   height: 40px; 
-                   background: white; 
-                   border-radius: 50%; 
-                   display: flex; 
-                   align-items: center; 
-                   justify-content: center; 
-                   color: var(--primary);
-                   font-weight: bold; }
-                   
-      .wallet-box { display: flex; 
-                    align-items: center; 
-                    gap: 8px; 
-                    background: rgba(0,0,0,0.2); 
-                    padding: 8px 15px; 
-                    border-radius: 20px; }
-
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; width: 100%; color: white; }
+        .circle-icon { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: bold; }
+        .wallet-box { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.2); padding: 8px 15px; border-radius: 20px; }
         #nav-panel { position: fixed; bottom: 15px; width: 75%; height: 60px; background: var(--white); border-radius: 30px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); left: 50%; transform: translateX(-50%); z-index: 100; }
-
         .page-content { width: 100%; padding: 20px; padding-bottom: 100px; }
         .label-bar { background: white; padding: 10px; border-radius: 10px; font-weight: bold; text-align: center; margin-bottom: 20px; color: #333; }
         .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .game-card { background: white; padding: 30px 10px; border-radius: 15px; font-weight: bold; text-align: center; position: relative; cursor: pointer; min-height: 100px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .delete-icon { position: absolute; top: 5px; right: 8px; color: var(--danger); font-size: 18px; }
-
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 20px; z-index: 1000; width: 280px; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
         .task-rect { background: white; padding: 15px; border-radius: 15px; margin-bottom: 10px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .p-card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .p-card b { color: var(--primary); font-size: 14px; }
+        .p-card p { margin: 5px 0; font-size: 13px; color: #333; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .pay-modal { background: white; width: 85%; border-radius: 20px; padding: 20px; text-align: center; color: #333; }
+        .pay-option { display: flex; align-items: center; gap: 15px; background: #f5f5f5; padding: 15px; border-radius: 12px; margin: 10px 0; cursor: pointer; border: 1px solid #ddd; }
+        .notif-badge { background: #ff1744; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-left: 8px; vertical-align: middle; }
+        .blink { animation: blinker 1.5s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
@@ -132,7 +58,7 @@
                 <div id="tab-login" class="tab active" onclick="switchAuth('login')">Login</div>
                 <div id="tab-sign" class="tab" onclick="switchAuth('signin')">Sign In</div>
             </div>
-            <input type="email" id="auth-email" placeholder="Email / Admin ID">
+            <input type="text" id="auth-email" placeholder="Email / Admin ID">
             <input type="password" id="auth-pass" placeholder="Password">
             <button class="btn btn-blue" onclick="handleAuthSubmit()">Submit</button>
         </div>
@@ -148,7 +74,7 @@
 
     <div id="app-container" class="hidden">
         <div class="top-bar">
-            <div class="user-info">
+            <div style="display: flex; align-items:center; gap:10px;">
                 <div class="circle-icon" id="bar-initial">?</div>
                 <span id="bar-name">User</span>
             </div>
@@ -156,21 +82,11 @@
         </div>
 
         <div id="page-home" class="page-content">
+            <button id="admin-pay-btn" class="btn btn-red hidden blink" style="margin-bottom:15px; background: #d32f2f;" onclick="showPage('requests')">
+                📢 PAYMENT REQUESTS <span id="notif-count" class="notif-badge hidden">0</span>
+            </button>
             <div class="label-bar">GAMES AVAILABLE</div>
             <div id="game-grid" class="game-grid"></div>
-        </div>
-
-        <div id="page-profile" class="page-content hidden">
-            <div style="text-align: center; margin-top: 20px;">
-                <div class="circle-icon" style="width: 80px; height: 80px; margin: 0 auto 15px;"><i data-lucide="user" size="40"></i></div>
-                <h2 id="prof-name" style="color: white; margin: 5px 0;">Name</h2>
-                <p id="prof-email" style="color: #eee;">email@example.com</p>
-                <div style="display: flex; justify-content: center; gap: 15px; margin: 25px 0;">
-                    <button class="btn btn-blue" style="width: 120px;" onclick="toggleWalletModal('add')">+ Add</button>
-                    <button class="btn btn-blue" style="width: 120px;" onclick="toggleWalletModal('withdraw')">- Withdraw</button>
-                </div>
-                <button class="btn btn-red" style="width: 80%;" onclick="logout()">Logout</button>
-            </div>
         </div>
 
         <div id="page-tasks" class="page-content hidden">
@@ -180,355 +96,401 @@
         </div>
 
         <div id="page-details" class="page-content hidden">
-            <div style="display: flex; align-items: center; gap: 15px; color: white; margin-bottom: 20px;">
-                <div class="circle-icon"><i data-lucide="gamepad-2"></i></div>
-                <div><h3 id="det-game-name" style="margin:0">Game</h3><small id="det-task-name">Task</small></div>
-            </div>
             <div class="label-bar">MATCH DETAILS</div>
-            <div id="detail-notes" style="color: white; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-bottom: 20px; line-height: 1.8;">
+            <div id="detail-notes" style="color: white; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-bottom: 20px; line-height: 1.8;"></div>
+            <button id="pay-join-btn" class="btn btn-green" onclick="handlePayJoin()">PAY & JOIN</button>
+            <div id="cs-details-box" class="label-bar hidden" style="text-align: left; margin-top: 20px; line-height: 1.6;">
+                📍 <b>Room No:</b> <span id="cs-room-val">Wait...</span> <br>
+                🔑 <b>Password:</b> <span id="cs-pass-val">Wait...</span> <br>
+                <div id="user-slot-display">🔢 <b>Your Slot:</b> <span id="cs-slot-val">0</span></div>
             </div>
-            <button class="btn btn-green" onclick="alert('Joined Successfully!')">PAY & JOIN</button>
-            <button id="admin-edit-btn" class="btn btn-red hidden" style="margin-top:20px" onclick="adminEditDetails()">Edit Details (Admin)</button>
+            <div id="admin-controls" class="hidden">
+                <button class="btn btn-red" onclick="adminEditDetails()">Edit Match (Admin)</button>
+                <button class="btn btn-blue" onclick="viewParticipants()">View Participants List</button>
+            </div>
+        </div>
+
+        <div id="page-participants" class="page-content hidden">
+            <div class="label-bar">PARTICIPANTS LIST</div>
+            <div id="participants-container"></div>
+            <button class="btn btn-red" onclick="showPage('details')" style="width: 120px; margin: 20px auto; display: block;">Back</button>
+        </div>
+
+        <div id="page-requests" class="page-content hidden">
+            <div class="label-bar">PAYMENT REQUESTS (UTR)</div>
+            <div id="requests-container"></div>
+            <button class="btn btn-blue" onclick="showPage('home')" style="width: 120px; margin: 20px auto; display: block;">Back</button>
+        </div>
+
+        <div id="page-profile" class="page-content hidden">
+            <div style="text-align: center; color: white; margin-top: 50px;">
+                <div class="circle-icon" id="prof-initial" style="width: 80px; height: 80px; font-size: 30px; margin: 0 auto 15px;">?</div>
+                <h2 id="prof-name" style="margin-bottom: 30px;">Name</h2>
+                <div id="user-actions-row" style="display: flex; gap: 15px; padding: 0 10px; margin-bottom: 50px;">
+                    <button class="btn btn-green" style="flex: 1;" onclick="handleAddCoins()">+ ADD</button>
+                    <button class="btn btn-blue" style="flex: 1; background: #fbc02d; color: #333;" onclick="handleWithdraw()">📤 WITHDRAW</button>
+                </div>
+                <div style="margin-top: 100px;">
+                    <button class="btn btn-red" style="width: 80%;" onclick="location.reload()">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="pay-modal-overlay" class="modal-overlay hidden">
+            <div class="pay-modal">
+                <h3 style="margin-top:0;">Recharge Wallet</h3>
+                <div class="pay-option" onclick="processPayment('UPI')">
+                    <i data-lucide="smartphone"></i>
+                    <div style="text-align: left;"><b style="display:block;">UPI Payment</b><small>UTR Verification required</small></div>
+                </div>
+                <div class="pay-option" onclick="processPayment('Redeem')">
+                    <i data-lucide="ticket"></i>
+                    <div style="text-align: left;"><b style="display:block;">Google Redeem Code</b><small>Manual Check</small></div>
+                </div>
+                <button class="btn btn-red" onclick="closePayModal()">Cancel</button>
+            </div>
         </div>
 
         <div id="nav-panel">
             <div onclick="showPage('home')"><i data-lucide="home"></i></div>
-            <div onclick="alert('No History Found')"><i data-lucide="history"></i></div>
             <div onclick="showPage('profile')"><i data-lucide="user"></i></div>
         </div>
     </div>
 
-    <div id="wallet-modal" class="modal hidden">
-        <h3 id="modal-title">Amount</h3>
-        <input type="number" id="wallet-amt" placeholder="Enter (1-100)">
-        <button class="btn btn-green" onclick="processWallet()">Confirm</button>
-        <button onclick="toggleWalletModal()" style="background:none; border:none; margin-top:10px; cursor:pointer; color: #666;">Cancel</button>
-    </div>
-
     <script>
-      const firebaseConfig = {
-  apiKey: "AIzaSyBBF_o1y4GELfB8nPec9sEYohL-Qjf78vE",
-  authDomain: "gamingapp-8c0fd.firebaseapp.com",
-  databaseURL: "https://gamingapp-8c0fd-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "gamingapp-8c0fd",
-  storageBucket: "gamingapp-8c0fd.firebasestorage.app",
-  messagingSenderId: "405967756959",
-  appId: "1:405967756959:web:7c02003ea2b437943b0caa",
-  measurementId: "G-NWREM2XW0W"
-};
-// initialize karein
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-        // --- 1. Global State & Data ---
-        let users = {}; // LocalStorage wala JSON.parse hata dein
+        const firebaseConfig = {
+            apiKey: "AIzaSyBBF_o1y4GELfB8nPec9sEYohL-Qjf78vE",
+            authDomain: "gamingapp-8c0fd.firebaseapp.com",
+            databaseURL: "https://gamingapp-8c0fd-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "gamingapp-8c0fd",
+            storageBucket: "gamingapp-8c0fd.firebasestorage.app",
+            messagingSenderId: "405967756959",
+            appId: "1:405967756959:web:7c02003ea2b437943b0caa"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        let games = [];
-let gameTasks = {};
+        let lastReqCount = 0;
+        let users = {}, games = [], gameTasks = {}, currentUser = null, currentOpenGame = '', currentOpenTaskIdx = -1;
 
-// Server se games load karne ke liye
-db.ref('games').on('value', (snapshot) => {
-    games = snapshot.val() || ["Free Fire", "BGMI"];
-    renderGames(); // Taaki screen par games dikhne lagein
-});
+        db.ref('games').on('value', s => { games = s.val() || []; renderGames(); });
+        db.ref('tasks').on('value', s => { gameTasks = s.val() || {}; if(currentOpenGame) renderTasks(); });
+        db.ref('users').on('value', s => { 
+            users = s.val() || {}; 
+            if(currentUser && users[currentUser.email.replace(/\./g, ',')]) {
+                currentUser = users[currentUser.email.replace(/\./g, ',')];
+                updateUI();
+            }
+        });
 
-// Server se tasks load karne ke liye
-db.ref('tasks').on('value', (snapshot) => {
-    gameTasks = snapshot.val() || {};
-    if(currentOpenGame) renderTasks();
-});
-
-        
-        let currentUser = null;
-        let authMode = 'login';
-        let currentOpenGame = '';
-        let currentOpenTaskIdx = -1;
-
-        // --- 2. Auth Logic ---
         function switchAuth(mode) {
-            authMode = mode;
             document.getElementById('tab-login').classList.toggle('active', mode === 'login');
             document.getElementById('tab-sign').classList.toggle('active', mode === 'signin');
+            window.authMode = mode;
         }
 
         function handleAuthSubmit() {
-    // Email mein '.' ko ',' se badalna padta hai kyunki Firebase '.' allow nahi karta keys mein
-    const email = document.getElementById('auth-email').value.trim().replace(/\./g, ',');
-    const pass = document.getElementById('auth-pass').value.trim();
+            const emailInp = document.getElementById('auth-email').value.trim();
+            const pass = document.getElementById('auth-pass').value.trim();
+            const email = emailInp.replace(/\./g, ',');
 
-    if(!email || !pass) return alert("Fields fill karein");
+            if(emailInp === 'admin' && pass === 'admin123') {
+                currentUser = { username: "Admin", email: "admin", wallet: 9999, isAdmin: true };
+                return startApp();
+            }
 
-    // Admin login
-    if(email === '3πdeveloper' && pass === '3πdeveloper008') {
-        currentUser = { username: "Admin", email: "admin", wallet: 9999, isAdmin: true };
-        startApp();
-        return;
-    }
-
-    if(authMode === 'login') {
-        // Online check
-        if(users[email] && users[email].pass === pass) {
-            currentUser = users[email];
-            startApp();
-        } else {
-            alert("User nahi mila ya password galat hai!");
+            if(window.authMode === 'signin') {
+                if(users[email]) return alert("Email exists!");
+                currentUser = { username: "User", email: emailInp, pass, wallet: 0, isAdmin: false };
+                document.getElementById('scr-auth').classList.add('hidden');
+                document.getElementById('scr-username').classList.remove('hidden');
+            } else {
+                if(users[email] && users[email].pass === pass) {
+                    currentUser = users[email];
+                    startApp();
+                } else alert("Wrong details!");
+            }
         }
-    } else {
-        // Sign In logic
-        if(users[email]) return alert("Email pehle se register hai!");
-        
-        currentUser = { email, pass, wallet: 0, isAdmin: false };
-        document.getElementById('scr-auth').classList.add('hidden');
-        document.getElementById('scr-username').classList.remove('hidden');
-    }
-}
-
-function saveNewUser() {
-    const uname = document.getElementById('new-uname').value.trim();
-    if(!uname) return alert("Name daalein");
-    
-    currentUser.username = uname;
-    // Database mein save karein
-    db.ref('users/' + currentUser.email).set(currentUser);
-    startApp();
-}
-
-        
 
         function startApp() {
             document.getElementById('scr-auth').classList.add('hidden');
             document.getElementById('scr-username').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
+            if(currentUser.isAdmin) document.getElementById('admin-pay-btn').classList.remove('hidden');
             updateUI();
+            renderGames(); 
             showPage('home');
             lucide.createIcons();
+            if(currentUser.isAdmin) listenRequests();
         }
 
         function updateUI() {
-            document.getElementById('bar-initial').innerText = currentUser.username[0].toUpperCase();
+            if(!currentUser) return;
+            document.getElementById('bar-initial').innerText = (currentUser.username[0] || '?').toUpperCase();
             document.getElementById('bar-name').innerText = currentUser.username;
             document.getElementById('bar-wallet').innerText = currentUser.wallet;
-            document.getElementById('prof-name').innerText = currentUser.username;
-            document.getElementById('prof-email').innerText = currentUser.email;
-            renderGames();
         }
 
-        function logout() {
-            currentUser = null;
-            location.reload(); // Hard reset to login
-        }
-
-        // --- 3. Navigation ---
-        function showPage(pageId) {
-            ['home', 'profile', 'tasks', 'details'].forEach(p => {
-                document.getElementById('page-' + p).classList.add('hidden');
+        function showPage(p) {
+            ['home','tasks','details','profile','participants','requests'].forEach(id => {
+                const el = document.getElementById('page-'+id);
+                if(el) el.classList.add('hidden');
             });
-            document.getElementById('page-' + pageId).classList.remove('hidden');
+            document.getElementById('page-'+p).classList.remove('hidden');
+            if(p === 'profile' && currentUser) {
+                document.getElementById('prof-name').innerText = currentUser.username;
+                document.getElementById('prof-initial').innerText = (currentUser.username[0] || '?').toUpperCase();
+                const actionRow = document.getElementById('user-actions-row');
+                if(actionRow) currentUser.isAdmin ? actionRow.classList.add('hidden') : actionRow.classList.remove('hidden');
+            }
         }
 
-        // --- 4. Game & Task Management ---
         function renderGames() {
             const grid = document.getElementById('game-grid');
             grid.innerHTML = '';
-            
-            games.forEach((g, idx) => {
+            games.forEach((g, i) => {
                 const card = document.createElement('div');
                 card.className = 'game-card';
-                card.innerHTML = `<span>${g}</span>`;
-                if(currentUser.isAdmin) {
-                    card.innerHTML += `<span class="delete-icon" onclick="deleteGame(${idx}, event)">✖</span>`;
-                }
-                card.onclick = () => openTaskList(g);
+                card.innerHTML = `<span>${g}</span> ${currentUser?.isAdmin ? `<span class="delete-icon" onclick="deleteGame(${i}, event)">✖</span>` : ''}`;
+                card.onclick = () => { handleGameClick(g); };
                 grid.appendChild(card);
             });
-
-            if(currentUser.isAdmin) {
-                const addBtn = document.createElement('div');
-                addBtn.className = 'game-card';
-                addBtn.style.border = "2px dashed #999";
-                addBtn.innerHTML = '<i data-lucide="plus"></i>';
-                addBtn.onclick = () => {
-                    const name = prompt("Enter Game Name:");
-                    if(name) {
-                        games.push(name);
-                        db.ref('games').set(games);
-                        renderGames();
-                        lucide.createIcons();
-                    }
-                };
-                grid.appendChild(addBtn);
-                lucide.createIcons();
+            if(currentUser?.isAdmin) {
+                const add = document.createElement('div');
+                add.className = 'game-card'; add.style.border = "2px dashed #666";
+                add.innerHTML = '<b>+ Add Game</b>';
+                add.onclick = () => { const n = prompt("Game Name:"); if(n){ games.push(n); db.ref('games').set(games); }};
+                grid.appendChild(add);
             }
         }
-function deleteGame(idx, e) {
-    e.stopPropagation();
-    if(confirm("Delete this game?")) {
-        games.splice(idx, 1);
-        db.ref('games').set(games); // Ye line zaroori hai
-        renderGames();
-    }
-}
 
-        
-
-        function openTaskList(gameName) {
+        function handleGameClick(gameName) {
             currentOpenGame = gameName;
-            showPage('tasks');
-            document.getElementById('task-title').innerText = gameName + " TASKS";
+            const emailKey = currentUser.email.replace(/\./g, ',');
+            if(!currentUser.isAdmin && (!currentUser.gameId || !currentUser.gameUid)) {
+                const gId = prompt("Enter your Game Name (ID):");
+                const gUid = prompt("Enter your Game UID:");
+                if(gId && gUid) {
+                    currentUser.gameId = gId;
+                    currentUser.gameUid = gUid;
+                    db.ref('users/' + emailKey).update({ gameId: gId, gameUid: gUid });
+                } else return alert("ID and UID required!");
+            }
+            showPage('tasks'); 
             renderTasks();
         }
 
         function renderTasks() {
             const list = document.getElementById('task-list');
             list.innerHTML = '';
+            document.getElementById('task-title').innerText = currentOpenGame + " TASKS";
             const tasks = gameTasks[currentOpenGame] || [];
-
-            if(tasks.length === 0) {
-                list.innerHTML = '<div style="color:white; text-align:center;">No match available.</div>';
-            } else {
-                tasks.forEach((t, idx) => {
-                    const div = document.createElement('div');
-                    div.className = 'task-rect';
-                    div.innerHTML = `<span>${t.name}</span>`;
-                    if(currentUser.isAdmin) {
-                        div.innerHTML += `<span style="color:red" onclick="deleteTask(${idx}, event)">✖</span>`;
-                    }
-                    div.onclick = () => openDetails(idx);
-                    list.appendChild(div);
-                });
-            }
-
-            if(currentUser.isAdmin) {
-                const addT = document.createElement('div');
-                addT.className = 'task-rect';
-                addT.style.background = "#e3f2fd";
-                addT.innerHTML = '<i data-lucide="plus" style="margin:auto"></i>';
-                addT.onclick = () => {
-                    const tName = prompt("Enter Match Name (e.g. Solo BR):");
-                    if(tName) {
+            tasks.forEach((t, i) => {
+                const item = document.createElement('div');
+                item.className = 'task-rect';
+                item.innerHTML = `<span>${t.name}</span> ${currentUser?.isAdmin ? `<span style="color:red" onclick="deleteTask(${i}, event)">✖</span>` : ''}`;
+                item.onclick = () => openDetails(i);
+                list.appendChild(item);
+            });
+            if(currentUser?.isAdmin) {
+                const add = document.createElement('div');
+                add.className = 'task-rect'; add.style.background = "#e3f2fd";
+                add.innerHTML = '<b>+ Add Match</b>';
+                add.onclick = () => {
+                    const n = prompt("Match Name (Use 'BR' for 48 slots, 'CS' for 8):");
+                    if(n) {
                         if(!gameTasks[currentOpenGame]) gameTasks[currentOpenGame] = [];
-                        gameTasks[currentOpenGame].push({
-                            name: tName, date: "TBA", time: "TBA", fee: "0", reward: "/kill", prize: "0"
-                        });
-                      db.ref('tasks').set(gameTasks);
-                        renderTasks();
-                        lucide.createIcons();
+                        gameTasks[currentOpenGame].push({ name: n, date: "TBA", time: "TBA", fee: "0", reward: "0", prize: "0", roomNo: "TBA", roomPass: "TBA", slots: {} });
+                        db.ref('tasks').set(gameTasks);
                     }
                 };
-                list.appendChild(addT);
-                lucide.createIcons();
+                list.appendChild(add);
             }
-        }
-
-        function deleteTask(idx, e) {
-            e.stopPropagation();
-            gameTasks[currentOpenGame].splice(idx, 1);
-            db.ref('tasks').set(gameTasks);
-            renderTasks();
         }
 
         function openDetails(idx) {
             currentOpenTaskIdx = idx;
-            const task = gameTasks[currentOpenGame][idx];
+            const t = gameTasks[currentOpenGame][idx];
             showPage('details');
             
-            document.getElementById('det-game-name').innerText = currentOpenGame;
-            document.getElementById('det-task-name').innerText = task.name;
+            const isCS = t.name.toUpperCase().includes("CS");
+            const isBR = t.name.toUpperCase().includes("BR");
+            const maxSlots = isBR ? 48 : (isCS ? 8 : 0);
             
-            document.getElementById('detail-notes').innerHTML = `
-                📅 <b>Date:</b> ${task.date}<br>
-                ⏰ <b>Time:</b> ${task.time}<br>
-                💰 <b>Fee:</b> ${task.fee} Coins<br>
-                💀 <b>reward:</b> ${task.reward}<br>
-                🏆 <b>Prize:</b> ${task.prize} Coins
-            `;
+            const joined = t.slots ? Object.keys(t.slots) : [];
+            const emailKey = currentUser.email.replace(/\./g, ',');
+            const hasJoined = joined.includes(emailKey);
+
+            document.getElementById('detail-notes').innerHTML = `📅 Date: ${t.date} <br> ⏰ Time: ${t.time}<br>💰 Fee: ${t.fee} <br> 💀 Reward: ${t.reward}<br>🏆 Prize: ${t.prize}<br>${(isCS || isBR) ? `👥 Joined: <span style="color:yellow">${joined.length}/${maxSlots}</span>` : ''}`;
+
+            const csBox = document.getElementById('cs-details-box');
+            const payBtn = document.getElementById('pay-join-btn');
+            const adminBox = document.getElementById('admin-controls');
 
             if(currentUser.isAdmin) {
-                document.getElementById('admin-edit-btn').classList.remove('hidden');
+                adminBox.classList.remove('hidden'); payBtn.classList.add('hidden');
+                if(isCS || isBR) {
+                    csBox.classList.remove('hidden'); document.getElementById('user-slot-display').classList.add('hidden');
+                    document.getElementById('cs-room-val').innerText = t.roomNo; document.getElementById('cs-pass-val').innerText = t.roomPass;
+                }
             } else {
-                document.getElementById('admin-edit-btn').classList.add('hidden');
+                adminBox.classList.add('hidden');
+                if(hasJoined && (isCS || isBR)) {
+                    payBtn.classList.add('hidden'); csBox.classList.remove('hidden');
+                    document.getElementById('cs-room-val').innerText = t.roomNo; document.getElementById('cs-pass-val').innerText = t.roomPass;
+                    document.getElementById('cs-slot-val').innerText = t.slots[emailKey];
+                } else {
+                    csBox.classList.add('hidden'); payBtn.classList.toggle('hidden', (isCS || isBR) && joined.length >= maxSlots);
+                }
+            }
+        }
+
+        function handlePayJoin() {
+            const t = gameTasks[currentOpenGame][currentOpenTaskIdx];
+            if(currentUser.wallet < parseInt(t.fee)) return alert("No Coins!");
+            
+            const isCS = t.name.toUpperCase().includes("CS");
+            const isBR = t.name.toUpperCase().includes("BR");
+            const maxSlots = isBR ? 48 : (isCS ? 8 : 0);
+            
+            if(!t.slots) t.slots = {};
+            const emailKey = currentUser.email.replace(/\./g, ',');
+
+            if(isCS || isBR) {
+                const taken = Object.values(t.slots);
+                let avail = []; for(let i=1; i<=maxSlots; i++) if(!taken.includes(i)) avail.push(i);
+                if(avail.length === 0) return alert("Match Full!");
+                t.slots[emailKey] = avail[0];
+            } else { t.slots[emailKey] = "Joined"; }
+            
+            currentUser.wallet -= parseInt(t.fee);
+            db.ref('users/' + emailKey).update({ wallet: currentUser.wallet });
+            db.ref('tasks').set(gameTasks);
+            alert("Joined! Your Slot: " + t.slots[emailKey]);
+            openDetails(currentOpenTaskIdx);
+        }
+
+        function handleAddCoins() { 
+            if(currentUser.isAdmin) return;
+            document.getElementById('pay-modal-overlay').classList.remove('hidden'); 
+            lucide.createIcons(); 
+        }
+
+        function closePayModal() { document.getElementById('pay-modal-overlay').classList.add('hidden'); }
+
+        function processPayment(type) {
+            closePayModal();
+            const emailKey = currentUser.email.replace(/\./g, ',');
+            if(type === 'UPI') {
+                const amount = prompt("Amount to recharge (₹):");
+                if(amount && !isNaN(amount)) {
+                    window.location.href = `upi://pay?pa=yourname@okicici&pn=Admin&am=${amount}&cu=INR`;
+                    setTimeout(() => {
+                        const utr = prompt("Enter 12-digit UTR No:");
+                        if(utr && utr.length >= 10) {
+                            db.ref('recharge_requests').push({
+                                user: currentUser.username, email: emailKey,
+                                amount: amount, utr: utr, type: 'UPI', status: 'pending', time: Date.now()
+                            });
+                            alert("Request sent!");
+                        }
+                    }, 4000);
+                }
+            } else {
+                const code = prompt("Enter Redeem Code:");
+                if(code) {
+                    db.ref('recharge_requests').push({
+                        user: currentUser.username, email: emailKey,
+                        code: code, type: 'REDEEM', status: 'pending', time: Date.now()
+                    });
+                    alert("Code submitted!");
+                }
+            }
+        }
+
+        function listenRequests() {
+            db.ref('recharge_requests').on('value', s => {
+                const container = document.getElementById('requests-container');
+                const badge = document.getElementById('notif-count');
+                if(!container) return;
+                container.innerHTML = '';
+                const data = s.val();
+                if(!data) { badge.classList.add('hidden'); container.innerHTML = '<p style="color:white;text-align:center;">No pending requests</p>'; return; }
+                const pendingKeys = Object.keys(data);
+                badge.innerText = pendingKeys.length;
+                badge.classList.remove('hidden');
+                pendingKeys.forEach(id => {
+                    const r = data[id];
+                    const card = document.createElement('div'); card.className = 'p-card';
+                    card.innerHTML = `<b>👤 User: ${r.user}</b><p>💰 Amount: ₹${r.amount || 0}</p><p>Info: ${r.utr || r.code}</p>
+                    <div style="display:flex; gap:10px;"><button class="btn btn-green" onclick="approveRequest('${id}', '${r.email}', ${r.amount || 0})">OK</button>
+                    <button class="btn btn-red" onclick="db.ref('recharge_requests/${id}').remove()">X</button></div>`;
+                    container.appendChild(card);
+                });
+            });
+        }
+
+        function approveRequest(reqId, userEmail, amount) {
+            let finalAmt = amount || parseInt(prompt("Enter amount for this code:"));
+            if(!finalAmt) return;
+            const userRef = db.ref('users/' + userEmail);
+            userRef.once('value', s => {
+                const u = s.val();
+                if(u) {
+                    userRef.update({ wallet: (u.wallet || 0) + finalAmt });
+                    db.ref('recharge_requests/' + reqId).remove();
+                    alert("Approved!");
+                }
+            });
+        }
+
+        function viewParticipants() {
+            const t = gameTasks[currentOpenGame][currentOpenTaskIdx];
+            const container = document.getElementById('participants-container');
+            container.innerHTML = ''; showPage('participants');
+            
+            const isCS = t.name.toUpperCase().includes("CS");
+            const isBR = t.name.toUpperCase().includes("BR");
+            const maxSlots = isBR ? 48 : (isCS ? 8 : 1);
+
+            for(let i=1; i<=maxSlots; i++) {
+                const emailKey = Object.keys(t.slots || {}).find(e => t.slots[e] == i);
+                const card = document.createElement('div'); card.className = 'p-card';
+                if(emailKey) {
+                    const u = users[emailKey];
+                    card.innerHTML = `<b>SLOT ${i}</b><p>👤 <b>User:</b> ${u.username}</p><p>🎮 <b>ID:</b> ${u.gameId}</p><p>🆔 <b>UID:</b> ${u.gameUid}</p>`;
+                } else { card.innerHTML = `<b>SLOT ${i}</b><p style="color:#999">Empty</p>`; card.style.borderLeft = "5px solid #ccc"; }
+                container.appendChild(card);
             }
         }
 
         function adminEditDetails() {
-            const task = gameTasks[currentOpenGame][currentOpenTaskIdx];
-            const d = prompt("Date:", task.date);
-            const t = prompt("Time:", task.time);
-            const f = prompt("Entry Fee:", task.fee);
-            const r = prompt("reward:" , task.reward);
-            const p = prompt("Win Prize:", task.prize);
-
-            if(d) task.date = d;
-            if(t) task.time = t;
-            if(f) task.fee = f;
-            if(r) task.reward = r;
-            if(p) task.prize = p;
-
+            const t = gameTasks[currentOpenGame][currentOpenTaskIdx];
+            t.date = prompt("Date:", t.date) || t.date;
+            t.time = prompt("Time:", t.time) || t.time;
+            t.fee = prompt("Fee:", t.fee) || t.fee;
+            t.reward = prompt("Reward:", t.reward) || t.reward;
+            t.prize = prompt("Prize:", t.prize) || t.prize;
+            t.roomNo = prompt("Room No:", t.roomNo) || t.roomNo;
+            t.roomPass = prompt("Room Pass:", t.roomPass) || t.roomPass;
             db.ref('tasks').set(gameTasks);
             openDetails(currentOpenTaskIdx);
         }
 
-                // --- 5. Wallet Logic ---
-        function toggleWalletModal(action) {
-            if(!action) {
-                document.getElementById('wallet-modal').classList.add('hidden');
-                document.getElementById('app-container').classList.remove('blur');
-                return;
-            }
-            window.currentWalletAction = action;
-            document.getElementById('modal-title').innerText = (action === 'add') ? "Add Coins" : "Withdraw Coins";
-            document.getElementById('wallet-modal').classList.remove('hidden');
-            document.getElementById('app-container').classList.add('blur');
+        function saveNewUser() {
+            const uname = document.getElementById('new-uname').value.trim();
+            if(!uname) return;
+            currentUser.username = uname;
+            db.ref('users/' + currentUser.email.replace(/\./g, ',')).set(currentUser);
+            startApp();
         }
 
-        function processWallet() {
-            const amt = parseInt(document.getElementById('wallet-amt').value);
-            if(!amt || amt < 1 || amt > 100) return alert("Enter amount between 1-100");
+        function deleteGame(i, e) { e.stopPropagation(); games.splice(i, 1); db.ref('games').set(games); }
+        function deleteTask(i, e) { e.stopPropagation(); gameTasks[currentOpenGame].splice(i, 1); db.ref('tasks').set(gameTasks); }
+        function handleWithdraw() { alert("Withdrawal request sent!"); }
 
-            if(window.currentWalletAction === 'add') {
-                currentUser.wallet += amt;
-            } else {
-                if(amt > currentUser.wallet) return alert("Insufficient Balance!");
-                currentUser.wallet -= amt;
-            }
-
-            db.ref('users/' + currentUser.email).set(currentUser);
-
-            
-            
-            updateUI();
-            toggleWalletModal();
-            document.getElementById('wallet-amt').value = '';
-        }
-function logout() {
-    // 1. Current user state clear karein
-    currentUser = null;
-    
-    // 2. LocalStorage se session clear karne ki zaroorat nahi kyunki hum users array save rakhte hain
-    // Lekin UI ko turant badalne ke liye:
-    document.getElementById('app-container').classList.add('hidden');
-    document.getElementById('scr-username').classList.add('hidden');
-    
-    // 3. Auth screen ko wapas dikhayein
-    document.getElementById('scr-auth').classList.remove('hidden');
-    
-    // 4. Login fields ko khali karein
-    document.getElementById('auth-email').value = '';
-    document.getElementById('auth-pass').value = '';
-
-    // 5. Forcefully reload karein (true se cache bypass hota hai)
-    window.location.href = window.location.pathname; 
-}
-
-        // Initialize icons
+        window.authMode = 'login';
         lucide.createIcons();
-        
-        // --- Step 4: Users Sync (Ise zaroor daalein) ---
-db.ref('users').on('value', (snapshot) => {
-    users = snapshot.val() || {};
-    console.log("Data loaded from Firebase!"); 
-});
-
     </script>
 </body>
 </html>
-
